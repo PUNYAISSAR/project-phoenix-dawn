@@ -14,7 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          biometric_enrolled: boolean | null
+          created_at: string | null
+          email: string
+          employee_id: string | null
+          first_name: string
+          id: string
+          last_name: string
+          profile_image_url: string | null
+          student_id: string | null
+          updated_at: string | null
+          user_type: Database["public"]["Enums"]["user_role"]
+        }
+        Insert: {
+          biometric_enrolled?: boolean | null
+          created_at?: string | null
+          email: string
+          employee_id?: string | null
+          first_name: string
+          id: string
+          last_name: string
+          profile_image_url?: string | null
+          student_id?: string | null
+          updated_at?: string | null
+          user_type: Database["public"]["Enums"]["user_role"]
+        }
+        Update: {
+          biometric_enrolled?: boolean | null
+          created_at?: string | null
+          email?: string
+          employee_id?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          profile_image_url?: string | null
+          student_id?: string | null
+          updated_at?: string | null
+          user_type?: Database["public"]["Enums"]["user_role"]
+        }
+        Relationships: []
+      }
+      user: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      user_role: "student" | "teacher" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +206,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_role: ["student", "teacher", "admin"],
+    },
   },
 } as const
