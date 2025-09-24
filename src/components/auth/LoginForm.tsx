@@ -10,10 +10,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface LoginFormProps {
   onForgotPassword: () => void;
+  onSignUp: () => void;
   onBiometricLogin?: () => void;
 }
 
-export const LoginForm = ({ onForgotPassword, onBiometricLogin }: LoginFormProps) => {
+export const LoginForm = ({ onForgotPassword, onSignUp, onBiometricLogin }: LoginFormProps) => {
   const [userType, setUserType] = useState<"student" | "teacher" | "admin">("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,7 +54,7 @@ export const LoginForm = ({ onForgotPassword, onBiometricLogin }: LoginFormProps
         <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
           <User className="h-6 w-6 text-primary-foreground" />
         </div>
-        <CardTitle className="text-2xl font-bold">Welcome to SchoolTrack</CardTitle>
+        <CardTitle className="text-2xl font-bold">Welcome to SmartAttendence</CardTitle>
         <CardDescription>Sign in to your account to continue</CardDescription>
       </CardHeader>
       <CardContent>
@@ -153,8 +154,8 @@ export const LoginForm = ({ onForgotPassword, onBiometricLogin }: LoginFormProps
             {isLoading ? "Signing in..." : "Sign In"}
           </Button>
 
-          {/* Forgot Password */}
-          <div className="text-center">
+          {/* Links */}
+          <div className="flex flex-col space-y-2 text-center text-sm">
             <Button
               type="button"
               variant="link"
@@ -162,6 +163,14 @@ export const LoginForm = ({ onForgotPassword, onBiometricLogin }: LoginFormProps
               className="text-sm text-primary hover:underline p-0 h-auto"
             >
               Forgot your password?
+            </Button>
+            <Button
+              type="button"
+              variant="link"
+              onClick={onSignUp}
+              className="text-sm text-muted-foreground hover:text-primary p-0 h-auto"
+            >
+              Don't have an account? Sign up
             </Button>
           </div>
 

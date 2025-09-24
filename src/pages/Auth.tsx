@@ -3,10 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 import { ResetPasswordForm } from "@/components/auth/ResetPasswordForm";
+import { SignUpForm } from "@/components/auth/SignUpForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle } from "lucide-react";
 
-type AuthView = "login" | "forgot-password" | "reset-password" | "reset-success";
+type AuthView = "login" | "signup" | "forgot-password" | "reset-password" | "reset-success" | "signup-success";
 
 const Auth = () => {
   const [currentView, setCurrentView] = useState<AuthView>("login");
@@ -16,12 +17,20 @@ const Auth = () => {
     setCurrentView("forgot-password");
   };
 
+  const handleSignUp = () => {
+    setCurrentView("signup");
+  };
+
   const handleBackToLogin = () => {
     setCurrentView("login");
   };
 
   const handleResetSuccess = () => {
     setCurrentView("reset-success");
+  };
+
+  const handleSignUpSuccess = () => {
+    setCurrentView("signup-success");
   };
 
   const handleBiometricLogin = () => {
@@ -35,7 +44,15 @@ const Auth = () => {
         return (
           <LoginForm
             onForgotPassword={handleForgotPassword}
+            onSignUp={handleSignUp}
             onBiometricLogin={handleBiometricLogin}
+          />
+        );
+      case "signup":
+        return (
+          <SignUpForm
+            onBackToLogin={handleBackToLogin}
+            onSuccess={handleSignUpSuccess}
           />
         );
       case "forgot-password":
@@ -63,6 +80,23 @@ const Auth = () => {
             </button>
           </div>
         );
+      case "signup-success":
+        return (
+          <div className="w-full max-w-md">
+            <Alert>
+              <CheckCircle className="h-4 w-4" />
+              <AlertDescription className="text-center">
+                Your account has been created successfully! Your facial recognition data has been enrolled. You can now login.
+              </AlertDescription>
+            </Alert>
+            <button
+              onClick={handleBackToLogin}
+              className="mt-4 w-full text-center text-primary hover:underline"
+            >
+              Continue to Login
+            </button>
+          </div>
+        );
       default:
         return null;
     }
@@ -74,9 +108,9 @@ const Auth = () => {
         {/* Header with School Branding */}
         <div className="text-center space-y-2">
           <div className="mx-auto h-20 w-20 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-lg">
-            <span className="text-2xl font-bold text-primary-foreground">ST</span>
+            <span className="text-2xl font-bold text-primary-foreground">SA</span>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">SchoolTrack</h1>
+          <h1 className="text-3xl font-bold text-foreground">SmartAttendence</h1>
           <p className="text-muted-foreground">Advanced Biometric Attendance Management</p>
         </div>
 
@@ -85,7 +119,7 @@ const Auth = () => {
 
         {/* Footer */}
         <div className="text-center text-xs text-muted-foreground">
-          <p>&copy; 2024 SchoolTrack. All rights reserved.</p>
+          <p>&copy; 2024 SmartAttendence. All rights reserved.</p>
           <p className="mt-1">Secure • Reliable • Professional</p>
         </div>
       </div>

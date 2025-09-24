@@ -10,9 +10,9 @@ const Index = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center space-y-6 mb-16">
           <div className="mx-auto h-24 w-24 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-xl">
-            <span className="text-3xl font-bold text-primary-foreground">ST</span>
+            <span className="text-3xl font-bold text-primary-foreground">SA</span>
           </div>
-          <h1 className="text-5xl font-bold text-foreground mb-4">SchoolTrack</h1>
+          <h1 className="text-5xl font-bold text-foreground mb-4">SmartAttendence</h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Revolutionary biometric attendance management system designed for modern educational institutions
           </p>
@@ -105,7 +105,7 @@ const Index = () => {
         <div className="text-center space-y-6">
           <h2 className="text-3xl font-bold text-foreground">Ready to Transform Your School?</h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            Join hundreds of educational institutions already using SchoolTrack for accurate, efficient attendance management.
+            Join hundreds of educational institutions already using SmartAttendence for accurate, efficient attendance management.
           </p>
           <Button asChild size="lg" className="h-12 px-8">
             <Link to="/auth">Start Free Trial</Link>

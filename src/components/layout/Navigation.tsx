@@ -80,9 +80,9 @@ export const Navigation = ({ userRole = "student" }: NavigationProps) => {
             <div className="flex h-16 flex-shrink-0 items-center px-4 border-b">
               <div className="flex items-center space-x-3">
                 <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
-                  <span className="text-sm font-bold text-primary-foreground">ST</span>
+                  <span className="text-sm font-bold text-primary-foreground">SA</span>
                 </div>
-                <span className="text-lg font-semibold">SchoolTrack</span>
+                <span className="text-lg font-semibold">SmartAttendence</span>
               </div>
             </div>
 
@@ -116,9 +116,9 @@ export const Navigation = ({ userRole = "student" }: NavigationProps) => {
         <div className="flex h-16 items-center justify-between bg-card border-b px-4">
           <div className="flex items-center space-x-3">
             <div className="h-8 w-8 rounded bg-primary flex items-center justify-center">
-              <span className="text-sm font-bold text-primary-foreground">ST</span>
+              <span className="text-sm font-bold text-primary-foreground">SA</span>
             </div>
-            <span className="text-lg font-semibold">SchoolTrack</span>
+            <span className="text-lg font-semibold">SmartAttendence</span>
           </div>
           
           <div className="flex items-center space-x-2">
