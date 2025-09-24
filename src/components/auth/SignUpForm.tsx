@@ -10,6 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Camera, UserPlus, Upload } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const signUpSchema = z.object({
   userType: z.enum(["student", "teacher", "admin"]),
@@ -36,9 +39,11 @@ export const SignUpForm = ({ onBackToLogin, onSuccess }: SignUpFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const { toast } = useToast();
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -110,21 +115,78 @@ export const SignUpForm = ({ onBackToLogin, onSuccess }: SignUpFormProps) => {
 
   const onSubmit = async (data: SignUpFormData) => {
     if (!capturedImage) {
+      setError("Please capture a profile photo first");
       return;
     }
 
     setIsLoading(true);
+    setError(null);
+    
     try {
-      // TODO: Implement actual sign up logic with Supabase
-      console.log("Sign up data:", data);
-      console.log("Captured image:", capturedImage);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      onSuccess();
+      // Create user with Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          data: {
+            user_type: data.userType,
+            first_name: data.firstName,
+            last_name: data.lastName,
+            student_id: data.studentId || null,
+            employee_id: data.employeeId || null,
+          },
+          emailRedirectTo: `${window.location.origin}/`
+        }
+      });
+
+      if (authError) {
+        setError(authError.message);
+        return;
+      }
+
+      if (authData.user) {
+        // Upload profile image to Supabase Storage
+        const fileName = `${authData.user.id}/profile.jpg`;
+        const base64Data = capturedImage.split(',')[1];
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+        const { error: uploadError } = await supabase.storage
+          .from('profile-images')
+          .upload(fileName, blob);
+
+        if (uploadError) {
+          console.warn("Profile image upload failed:", uploadError);
+          // Continue even if image upload fails
+        }
+
+        // Update profile with image URL
+        if (!uploadError) {
+          const { data: imageUrl } = supabase.storage
+            .from('profile-images')
+            .getPublicUrl(fileName);
+
+          await supabase.from('profiles').update({
+            profile_image_url: imageUrl.publicUrl,
+            biometric_enrolled: true
+          }).eq('id', authData.user.id);
+        }
+
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account.",
+        });
+
+        onSuccess();
+      }
     } catch (error) {
       console.error("Sign up error:", error);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -143,6 +205,12 @@ export const SignUpForm = ({ onBackToLogin, onSuccess }: SignUpFormProps) => {
       </CardHeader>
 
       <CardContent className="space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* User Type Selection */}
