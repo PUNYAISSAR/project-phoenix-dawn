@@ -7,6 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LoginFormProps {
   onForgotPassword: () => void;
@@ -29,11 +30,40 @@ export const LoginForm = ({ onForgotPassword, onSignUp, onBiometricLogin }: Logi
     setError("");
 
     try {
-      // TODO: Implement actual authentication logic with Supabase
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      console.log("Login attempt:", { userType, email, rememberMe });
-    } catch (err) {
-      setError("Invalid credentials. Please try again.");
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
+        return;
+      }
+
+      if (data.user) {
+        // Check if user profile exists and matches selected user type
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError || !profile) {
+          setError("User profile not found. Please contact support.");
+          return;
+        }
+
+        if (profile.user_type !== userType) {
+          setError(`You selected ${userType} but your account is registered as ${profile.user_type}.`);
+          return;
+        }
+
+        console.log("Login successful!");
+        // Redirect will be handled by auth state change
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Login failed. Please check your credentials and try again.");
     } finally {
       setIsLoading(false);
     }
